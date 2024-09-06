@@ -7,15 +7,15 @@ const app = express();
 
 // Configurer CORS pour autoriser plusieurs origines
 const allowedOrigins = ['http://localhost:3000', 'http://192.168.221.1:3000'];
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`Origin ${origin} not allowed by CORS`));
-    }
-  }
-}));
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error(`Origin ${origin} not allowed by CORS`));
+//     }
+//   }
+// }));
 
 // Middleware pour parser les requêtes JSON
 app.use(express.json());
@@ -25,7 +25,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Servir le dossier "data" statiquement
-app.use('/data', express.static(path.join(__dirname, 'data')));
+app
+  .use(express.json())
+  .use(express.urlencoded({extended: true}))
+  .use(cors())
+  .use('/data', express.static(path.join(__dirname, 'data')))
 
 // Données simulées
 let possessions = [
